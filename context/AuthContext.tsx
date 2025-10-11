@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import * as SecureStore from "expo-secure-store";
 
 type User = {
   email?: string;
@@ -9,6 +16,8 @@ type AuthContextType = {
   isAuthenticated: boolean;
   user: User | null;
   login: (userData: User) => void;
+  setUser: (userData: User) => void;
+  loading: boolean;
   logout: () => void;
 };
 
@@ -16,9 +25,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (userData: User) => {
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await SecureStore.getItemAsync("user");
+      setUser(user ? JSON.parse(user) : null);
+      setLoading(false);
+    };
+    fetchUser();
+  }, []);
+
+  const login = async (userData: User) => {
     setUser(userData);
+    await SecureStore.setItemAsync("user", JSON.stringify(userData));
   };
 
   const logout = () => {
@@ -27,7 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated: !!user, user, login, logout }}
+      value={{ isAuthenticated: !!user, user, login, logout, setUser, loading }}
     >
       {children}
     </AuthContext.Provider>

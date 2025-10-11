@@ -5,15 +5,14 @@ import {
   TextInput,
   StyleSheet,
   Alert,
-  ScrollView,
   Image,
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
-import { useAuth } from "@/context/AuthContext";
-import { getApiUrl, API_CONFIG } from "@/config/api";
+import { useAuth } from "../../context/AuthContext";
+import { getApiUrl, API_CONFIG } from "../../config/api";
 import Animated, { FadeIn } from "react-native-reanimated"; // For better animations; install if needed, or use built-in Animated
 
 const OrderFormScreen = () => {
@@ -105,7 +104,7 @@ const OrderFormScreen = () => {
     }
 
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: false, // Disables the built-in editor for full image selection without cropping
       quality: 1,
     });
@@ -296,15 +295,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   inputCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20, // Rounded for modern card effect
+    // backgroundColor: "#FFFFFF",
+    // borderRadius: 20, // Rounded for modern card effect
     padding: 20,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5, // Subtle shadow for lifted, beautiful depth
+    marginBottom: 0,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 4 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 8,
+    // elevation: 5, // Subtle shadow for lifted, beautiful depth
   },
   sectionHeader: {
     flexDirection: "row",

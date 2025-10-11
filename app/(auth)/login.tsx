@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,8 @@ import {
   Animated,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
+import { API_CONFIG, getApiUrl } from "../../config/api";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -17,50 +18,39 @@ const LoginScreen = () => {
   const router = useRouter();
   const { login } = useAuth();
 
-  // Animation setup for fade-in effect
-  const fadeAnim = new Animated.Value(0);
-
-  useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 800,
-      useNativeDriver: true,
-    }).start();
-  }, []);
-
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Please enter both email and password");
       return;
     }
     // In a real app, you would send this data to your backend for authentication.
     // Example:
-    // try {
-    //   const response = await fetch("YOUR_BACKEND_API_ENDPOINT/login", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ email, password }),
-    //   });
-    //   const data = await response.json();
-    //   if (response.ok) {
-    //     Alert.alert("Success", data.message || "Logged in successfully!");
-    //     router.push("/order-form");
-    //   } else {
-    //     Alert.alert("Error", data.message || "Invalid credentials.");
-    //   }
-    // } catch (error) {
-    //   console.error("Login error:", error);
-    //   Alert.alert("Error", "An error occurred during login.");
-    // }
+    try {
+      const response = await fetch(
+        getApiUrl(API_CONFIG.ENDPOINTS.USERS + "/login"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        Alert.alert("Success", data.message || "Logged in successfully!");
+        login({ ...data.user, token: data.token });
+        router.push("/order-form");
+      } else {
+        Alert.alert("Error", data.message || "Invalid credentials.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      Alert.alert("Error", "An error occurred during login.");
+    }
     console.log("Login Data:", { email, password });
-    // For this demo we'll treat the entered email as the logged in user.
-    login({ email });
-    Alert.alert("Success", "Logged in successfully!");
-    router.push("/order-form"); // Navigate to OrderForm after successful login
   };
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+    <Animated.View style={[styles.container]}>
       <View style={styles.logoContainer}>
         <Text style={styles.logo}>Welcome Back</Text>
       </View>
@@ -81,7 +71,7 @@ const LoginScreen = () => {
         secureTextEntry
         placeholderTextColor="#A0A0A0"
       />
-      <Animated.View style={[styles.buttonContainer, { opacity: fadeAnim }]}>
+      <Animated.View style={[styles.buttonContainer]}>
         <Button title="Login" onPress={handleLogin} color="#4A90E2" />
       </Animated.View>
       <View style={styles.linkContainer}>

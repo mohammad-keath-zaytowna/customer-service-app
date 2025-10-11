@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { API_CONFIG, getApiUrl } from "../../config/api";
 
 const SignupScreen = () => {
   const [name, setName] = useState("");
@@ -18,48 +19,38 @@ const SignupScreen = () => {
   const [role, setRole] = useState("user"); // Default to user
   const router = useRouter();
 
-  // Animation setup for fade-in effect
-  const fadeAnim = new Animated.Value(0);
-
-  useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 800,
-      useNativeDriver: true,
-    }).start();
-  }, []);
-
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!name || !email || !password) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
     // In a real app, you would send this data to your backend for user registration.
     // Example:
-    // try {
-    //   const response = await fetch("YOUR_BACKEND_API_ENDPOINT/signup", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ name, email, password, role }),
-    //   });
-    //   const data = await response.json();
-    //   if (response.ok) {
-    //     Alert.alert("Success", data.message || "Account created successfully!");
-    //     router.push("/login");
-    //   } else {
-    //     Alert.alert("Error", data.message || "Failed to create account.");
-    //   }
-    // } catch (error) {
-    //   console.error("Signup error:", error);
-    //   Alert.alert("Error", "An error occurred during signup.");
-    // }
+    try {
+      const response = await fetch(
+        getApiUrl(API_CONFIG.ENDPOINTS.USERS + "/register"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, role }),
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        Alert.alert("Success", data.message || "Account created successfully!");
+        router.push("/login");
+      } else {
+        Alert.alert("Error", data.message || "Failed to create account.");
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      Alert.alert("Error", "An error occurred during signup.");
+    }
     console.log("Signup Data:", { name, email, password, role });
-    Alert.alert("Success", `Account created successfully as ${role}!`);
-    router.push("/login"); // Navigate to Login after successful signup
   };
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+    <Animated.View style={[styles.container]}>
       <View style={styles.logoContainer}>
         <Text style={styles.logo}>Create Account</Text>
       </View>
@@ -124,7 +115,7 @@ const SignupScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <Animated.View style={[styles.buttonContainer, { opacity: fadeAnim }]}>
+      <Animated.View style={[styles.buttonContainer]}>
         <Button title="Sign Up" onPress={handleSignup} color="#50E3C2" />
       </Animated.View>
       <View style={styles.linkContainer}>

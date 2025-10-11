@@ -6,8 +6,8 @@ import {
 import { Stack } from "expo-router";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { AuthProvider } from "@/context/AuthContext";
+import { useColorScheme } from "../hooks/use-color-scheme";
+import { AuthProvider } from "../context/AuthContext";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -21,8 +21,22 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(auth)/login"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="(auth)/signup"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="(auth)/forgot-password"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="(tabs)/order-form"
+            options={{ headerShown: false }}
+          />
         </Stack>
       </ThemeProvider>
     </AuthProvider>
