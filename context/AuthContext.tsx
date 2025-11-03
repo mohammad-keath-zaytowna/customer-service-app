@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import * as SecureStore from "expo-secure-store";
+import { getApiUrl, API_CONFIG } from "../config/api";
 
 type User = {
   email?: string;
@@ -30,7 +31,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchUser = async () => {
       const user = await SecureStore.getItemAsync("user");
-      setUser(user ? JSON.parse(user) : null);
+      console.log("user", user);
+      const response = await fetch(
+        getApiUrl(API_CONFIG.ENDPOINTS.USERS + "/me"),
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: user ? `Bearer ${JSON.parse(user).token}` : "",
+          },
+        }
+      );
+      const data = await response.json();
+      console.log("data", data);
+      if (response.ok) {
+        setUser({ ...data.user, token: data.token });
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     };
     fetchUser();

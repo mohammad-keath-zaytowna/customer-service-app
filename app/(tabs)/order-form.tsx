@@ -25,6 +25,7 @@ const OrderFormScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   const { isAuthenticated, user } = useAuth();
+  console.log("user", user);
 
   useEffect(() => {
     if (!isAuthenticated) {

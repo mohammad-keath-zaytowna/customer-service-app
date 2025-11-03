@@ -1,6 +1,6 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: "http://192.168.100.11:5000/api",
+  BASE_URL: "http://192.168.1.6:5000/api",
   ENDPOINTS: {
     ORDERS: "/orders",
     USERS: "/users",
